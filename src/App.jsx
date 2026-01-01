@@ -4,13 +4,13 @@ import { Calendar, Trash2, Plus, Save, CheckCircle, TrendingUp, Users } from 'lu
 const MedicalRepsPortal = () => {
   // Data
   const representatives = [
-    { code: '48640', name: 'Ahmed Mohamed Nashaat', areas: 'Gerga, Sohag City, El Baliana, El Monshaa, Dar ElSalam' },
-    { code: '47474', name: 'Ahmed Osman', areas: 'Deshna, Nagaa Hamady, Farshout, Abo Tesht, Kaft, Nakada' },
-    { code: '48645', name: 'Azza Abdel Moatamed', areas: 'El Menia, Samalout, Maghagha, Bani Mazar, Matay, El Adwa' },
-    { code: '49595', name: 'Mary Hosny Gatas', areas: 'Tahta, El Maragha, Sakalta, Guhaina, Akhmeem, Tema' },
-    { code: '47478', name: 'Mayar Gamal Kamel', areas: 'Assuit, Manqabad, Manfalout, Dayrout, El Qousia, New Valley' },
-    { code: '49006', name: 'Sara Nabil Welsn', areas: 'Abou Korkas, Dair Mouas, Malawy' },
-    { code: 'TBD', name: 'Ahmed Abdel Hady', areas: 'Qena, Luxor, Hurghada, Naqada' }
+    { code: 'REP_1', name: 'Ahmed Nashaat', areas: 'Gerga, Sohag City, El Baliana, El Monshaa, Dar ElSalam' },
+    { code: 'REP_2', name: 'Ahmed Osman', areas: 'Deshna, Nagaa Hamady, Farshout, Abo Tesht, Kaft, Nakada' },
+    { code: 'REP_3', name: 'Azza Moatamed', areas: 'El Menia, Samalout, Maghagha, Bani Mazar, Matay, El Adwa' },
+    { code: 'REP_4', name: 'Mary Hosny', areas: 'Sohag City, Tahta, El Maragha, Sakalta, Guhaina, Akhmeem, Tema' },
+    { code: 'REP_5', name: 'Mayar Gamal', areas: 'Assuit, Manqabad, Manfalout, Dayrout, El Qousia, New Valley' },
+    { code: 'REP_6', name: 'Sara Nabil', areas: 'Abou Korkas, Dair Mouas, Malawy' },
+    { code: 'REP_7', name: 'Ahmed Hady', areas: 'Qena, Luxor, Hurghada, Naqada' }
   ];
 
   const workDays = [
@@ -288,7 +288,7 @@ const MedicalRepsPortal = () => {
 
   // Functions
   const handleLogin = () => {
-    if (loginCode === 'MANAGER2025') {
+    if (loginCode === 'MANAGER@2026') {
       setUserRole('manager');
       setLoginError('');
     } else {
@@ -780,7 +780,7 @@ Provide actionable insights and recommendations.`
                 
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <h3 className="text-lg font-bold text-gray-900 mb-2">Manager Code</h3>
-                  <p className="text-sm text-gray-600 mb-4">Current manager code: <span className="font-mono bg-gradient-to-r from-yellow-100 to-orange-100 px-3 py-1 rounded-lg font-bold">MANAGER2025</span></p>
+                  <p className="text-sm text-gray-600 mb-4">Current manager code: <span className="font-mono bg-gradient-to-r from-yellow-100 to-orange-100 px-3 py-1 rounded-lg font-bold">MANAGER@2026</span></p>
                   <p className="text-xs text-gray-500 bg-yellow-50 p-3 rounded-xl">⚠️ Changing the manager code will require you to login again.</p>
                 </div>
               </div>
