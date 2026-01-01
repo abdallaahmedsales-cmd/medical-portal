@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Trash2, Plus, Save, CheckCircle, TrendingUp, Users } from 'lucide-react';
 
 const MedicalRepsPortal = () => {
@@ -86,7 +86,7 @@ const MedicalRepsPortal = () => {
   const [visitFeedback, setVisitFeedback] = useState('');
 
   // Load dashboard data
-  React.useEffect(() => {
+  useEffect(() => {
     if (activeTab === 'dashboard' && userRole === 'manager') {
       loadDashboardData();
     }
@@ -95,20 +95,19 @@ const MedicalRepsPortal = () => {
     }
   }, [activeTab, userRole]);
 
-  const loadHospitals = async () => {
+  const loadHospitals = () => {
     try {
-      const keys = await window.storage.list('hospital_', true);
       const loadedHospitals = [];
-      if (keys && keys.keys) {
-        for (const key of keys.keys) {
-          try {
-            const data = await window.storage.get(key, true);
-            if (data && data.value) {
-              loadedHospitals.push(JSON.parse(data.value));
-            }
-          } catch (e) {
-            console.log('Key not found:', key);
+      const keys = Object.keys(localStorage).filter(key => key.startsWith('hospital_'));
+      
+      for (const key of keys) {
+        try {
+          const item = localStorage.getItem(key);
+          if (item) {
+            loadedHospitals.push(JSON.parse(item));
           }
+        } catch (e) {
+          console.log('Error parsing key:', key);
         }
       }
       
@@ -123,39 +122,37 @@ const MedicalRepsPortal = () => {
     }
   };
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = () => {
     setDashboardLoading(true);
     try {
       // Load weekly plans
-      const weeklyKeys = await window.storage.list('weekly_plan_', true);
       const weeklyPlans = [];
-      if (weeklyKeys && weeklyKeys.keys) {
-        for (const key of weeklyKeys.keys) {
-          try {
-            const data = await window.storage.get(key, true);
-            if (data && data.value) {
-              weeklyPlans.push(JSON.parse(data.value));
-            }
-          } catch (e) {
-            console.log('Key not found:', key);
+      const weeklyKeys = Object.keys(localStorage).filter(key => key.startsWith('weekly_plan_'));
+      
+      for (const key of weeklyKeys) {
+        try {
+          const item = localStorage.getItem(key);
+          if (item) {
+            weeklyPlans.push(JSON.parse(item));
           }
+        } catch (e) {
+          console.log('Error parsing weekly plan:', key);
         }
       }
       setAllWeeklyPlans(weeklyPlans);
 
       // Load daily reports
-      const dailyKeys = await window.storage.list('daily_report_', true);
       const dailyReports = [];
-      if (dailyKeys && dailyKeys.keys) {
-        for (const key of dailyKeys.keys) {
-          try {
-            const data = await window.storage.get(key, true);
-            if (data && data.value) {
-              dailyReports.push(JSON.parse(data.value));
-            }
-          } catch (e) {
-            console.log('Key not found:', key);
+      const dailyKeys = Object.keys(localStorage).filter(key => key.startsWith('daily_report_'));
+      
+      for (const key of dailyKeys) {
+        try {
+          const item = localStorage.getItem(key);
+          if (item) {
+            dailyReports.push(JSON.parse(item));
           }
+        } catch (e) {
+          console.log('Error parsing daily report:', key);
         }
       }
       setAllDailyReports(dailyReports);
@@ -174,7 +171,7 @@ const MedicalRepsPortal = () => {
     return allDailyReports.reduce((sum, report) => sum + (report.totalVisits || 0), 0);
   };
 
-  const addHospital = async () => {
+  const addHospital = () => {
     if (!newHospital.name || !newHospital.location) {
       alert('Please fill hospital name and location');
       return;
@@ -191,7 +188,7 @@ const MedicalRepsPortal = () => {
     };
 
     try {
-      await window.storage.set(`hospital_${hospitalData.id}`, JSON.stringify(hospitalData), true);
+      localStorage.setItem(`hospital_${hospitalData.id}`, JSON.stringify(hospitalData));
       setHospitals([...hospitals, hospitalData]);
       setNewHospital({ name: '', location: '', contactPerson: '', phone: '', products: {} });
       setShowAddHospital(false);
@@ -201,7 +198,7 @@ const MedicalRepsPortal = () => {
     }
   };
 
-  const updateHospitalProduct = async (hospitalId, product, status) => {
+  const updateHospitalProduct = (hospitalId, product, status) => {
     const hospital = hospitals.find(h => h.id === hospitalId);
     if (!hospital) return;
 
@@ -211,20 +208,20 @@ const MedicalRepsPortal = () => {
     };
 
     try {
-      await window.storage.set(`hospital_${hospitalId}`, JSON.stringify(updated), true);
+      localStorage.setItem(`hospital_${hospitalId}`, JSON.stringify(updated));
       setHospitals(hospitals.map(h => h.id === hospitalId ? updated : h));
     } catch (error) {
       alert('Error updating: ' + error.message);
     }
   };
 
-  const addHospitalVisit = async (hospitalId) => {
+  const addHospitalVisit = (hospitalId) => {
     setVisitHospitalId(hospitalId);
     setVisitFeedback('');
     setShowVisitModal(true);
   };
 
-  const submitVisit = async () => {
+  const submitVisit = () => {
     if (!visitFeedback.trim()) {
       alert('Please enter visit feedback');
       return;
@@ -246,7 +243,7 @@ const MedicalRepsPortal = () => {
     };
 
     try {
-      await window.storage.set(`hospital_${visitHospitalId}`, JSON.stringify(updated), true);
+      localStorage.setItem(`hospital_${visitHospitalId}`, JSON.stringify(updated));
       setHospitals(hospitals.map(h => h.id === visitHospitalId ? updated : h));
       setShowVisitModal(false);
       setVisitFeedback('');
@@ -257,7 +254,7 @@ const MedicalRepsPortal = () => {
     }
   };
 
-  const changeRepCode = async (repCode) => {
+  const changeRepCode = (repCode) => {
     if (!newCode.trim()) {
       alert('Please enter new code');
       return;
@@ -270,8 +267,6 @@ const MedicalRepsPortal = () => {
       return;
     }
 
-    // In real app, this would update backend
-    // For now, we'll just update the local array
     alert(`Code changed successfully!\n\nOld Code: ${repCode}\nNew Code: ${newCode}\n\nNote: This is a demo. In production, this would update the database.`);
     setEditingRepCode(null);
     setNewCode('');
@@ -458,7 +453,7 @@ Provide actionable insights and recommendations.`
     return weeklyPlan[dayId].filter(doc => doc.doctorName.trim()).length;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!selectedRep || !weekStartDate) {
       alert('Please select representative and week start date');
       return;
@@ -473,10 +468,10 @@ Provide actionable insights and recommendations.`
       submittedAt: new Date().toISOString()
     };
     
-    // Save to storage
+    // Save to local storage
     try {
       const storageKey = `weekly_plan_${selectedRep}_${weekStartDate}`;
-      await window.storage.set(storageKey, JSON.stringify(planData), true);
+      localStorage.setItem(storageKey, JSON.stringify(planData));
       
       console.log('Weekly Plan Submitted:', planData);
       alert(`Weekly plan submitted successfully!\n\nTotal doctors planned: ${getTotalPlannedDoctors()} out of 50`);
@@ -502,7 +497,7 @@ Provide actionable insights and recommendations.`
     }
   };
 
-  const handleDailyReportSubmit = async () => {
+  const handleDailyReportSubmit = () => {
     if (!dailyRep) {
       alert('Please select representative');
       return;
@@ -524,10 +519,10 @@ Provide actionable insights and recommendations.`
       submittedAt: new Date().toISOString()
     };
     
-    // Save to storage
+    // Save to local storage
     try {
       const storageKey = `daily_report_${dailyRep}_${reportDate}`;
-      await window.storage.set(storageKey, JSON.stringify(reportData), true);
+      localStorage.setItem(storageKey, JSON.stringify(reportData));
       
       console.log('Daily Report Submitted:', reportData);
       alert(`Daily report submitted successfully!\n\nTotal visits: ${reportData.totalVisits}`);
